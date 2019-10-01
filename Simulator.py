@@ -12,30 +12,54 @@ class Simulation:
         self.pendingQueue = Pqueue()
         self.numLP = numLP
         #data will be the LP being sent to.
-        firstNode = self.pendingQueue.newNode(0,0)
-        self.pendingQueue.pushN(firstNode)
+        #firstNode = self.pendingQueue.newNode(0,0)
+        #self.pendingQueue.pushN(firstNode)
         self.lpList = lpList
         self.numTrips = 0
         self.numProcessesInside = 0
+        self.ballInTransit = False
+        self.numRoundTrips = 0
+        #first is equal to
+        #create first event from
+
+
     def simulate(self):
-        i = 0
-        first = True
-        while self.mySimTime < self.sim_time and not self.pendingQueue.isEmpty():
+        self.lpList[0].generateInitialEvent()
+        while self.mySimTime < self.sim_time:
             #always looks at head
             #because we made a dummy firstNode in queue, we remove that output.
             self.mySimTime = self.pendingQueue.peek_priority()
+            if self.pendingQueue.peek_data()['destLP'] == 0:
+                self.numRoundTrips +=1
+            print('LP Process: {}\t time now: {}'.format(self.pendingQueue.peek_data(), self.pendingQueue.peek_priority()))
 
-            if not first:
-                print('LP Process: {}\t time now: {}'.format(self.pendingQueue.peek_data(), self.pendingQueue.peek_priority()))
-            self.lpList[i].generateEvent()
+            if self.pendingQueue.peek_data()['state'] == 0:#event created and we want to send the message
+                self.handleDepart()
+            if self.pendingQueue.peek_data()['state'] == 1:#event estArrive is in queue and we want to say we recieved the message
+                self.handleArrive()
             node = self.pendingQueue.pop()
             #handle where it is trying to send to.
-
             self.numTrips += 1
-            i = (i+1) % self.numLP
-            first = False
-        self.numTrips -= 1
 
+
+
+
+
+    def handleDepart(self):
+        if self.pendingQueue.size() <= 1 and not self.ballInTransit:
+            self.lpList[self.pendingQueue.peek_data()['destLP']].generateInitialEvent()
+        else:
+            self.lpList[self.pendingQueue.peek_data()['destLP']].generateEvent()
+        self.ballInTransit = True
+    def handleArrive(self):
+        self.lpList[self.pendingQueue.peek_data()['destLP']].finishEvent()
+
+        if self.pendingQueue.size() <= 1:
+            self.lpList[self.pendingQueue.peek_data()['destLP']].generateInitialEvent()
+
+        #set state lf lp to 2, aka lp.finalState
+    def getNumRoundTrips(self):
+        return self.numRoundTrips
 
     def getNumTotalTrips(self):
         return self.numTrips

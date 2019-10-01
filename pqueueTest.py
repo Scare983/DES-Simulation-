@@ -13,6 +13,7 @@ temp1 = pp.newNode(7,4)
 pp.pushN(temp1)
 
 #pp.printNodes()
+print(pp.size())
 while pp.isEmpty() == False:
-    #print("d:{}  p:{}".format(pp.peek_data(), pp.peek_priority()))
-    print(pp.pop())
+    print("d:{}  p:{}".format(pp.peek_data(), pp.peek_priority()))
+    pp.pop()

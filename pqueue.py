@@ -5,8 +5,6 @@ class Node:
 
     def __init__(self, data, priority):
         #min bound of data is 1.
-        if data < 1:
-            data = 1
         self.allData = {
             'data' : data,
             'priority' : priority,
@@ -93,3 +91,11 @@ class Pqueue:
         while(temp is not None):
             print (temp.allData['priority'])
             temp = temp.allData['nextNode']
+    def size(self):
+        temp = self.head
+        i = 0
+        while(temp is not None):
+            i+=1
+            temp = temp.allData['nextNode']
+        return i
+
