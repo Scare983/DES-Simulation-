@@ -41,16 +41,13 @@ class Simulation:
             #handle where it is trying to send to.
             self.numTrips += 1
 
-
-
-
-
     def handleDepart(self):
         if self.pendingQueue.size() <= 1 and not self.ballInTransit:
             self.lpList[self.pendingQueue.peek_data()['destLP']].generateInitialEvent()
         else:
             self.lpList[self.pendingQueue.peek_data()['destLP']].generateEvent()
         self.ballInTransit = True
+
     def handleArrive(self):
         self.lpList[self.pendingQueue.peek_data()['destLP']].finishEvent()
 
